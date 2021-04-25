@@ -1,9 +1,6 @@
 package com.kakao.web;
 
-import java.math.BigInteger;
-
 import lombok.Data;
-import lombok.ToString;
 
 @Data
 //@ToString

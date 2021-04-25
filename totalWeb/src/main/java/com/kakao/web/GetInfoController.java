@@ -1,15 +1,8 @@
 package com.kakao.web;
 
-import java.io.PrintWriter;
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,15 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
-import com.kakao.web.GetInfoService;
-import com.kakao.web.TradeVO;
 
  
 @Controller
@@ -45,6 +32,7 @@ public class GetInfoController {
 	
 	
 	//1번 2018년, 2019년 각 연도별 합계 금액이 가장 많은 고객을 추출하는 API 개발.(단, 취소여부가 ‘Y’ 거래는 취소된 거래임, 합계 금액은 거래금액에서 수수료를 차감한 금액임)
+	//http://localhost:8080/kakao/cust/sumMost
 	@ResponseBody
 	@RequestMapping("/cust/sumMost")
 	public String sumMostCust (HttpServletRequest request, HttpServletResponse response) {
@@ -89,6 +77,7 @@ public class GetInfoController {
 	
 	
 	//2번 2018년 또는 2019년에 거래가 없는 고객을 추출하는 API 개발.
+	//http://localhost:8080/kakao/cust/noTrade
 	@ResponseBody
 	@RequestMapping("/cust/noTrade")
 	public String noTrade (HttpServletRequest request, HttpServletResponse response) {
@@ -115,32 +104,14 @@ public class GetInfoController {
 	}
 
 	//3번 연도별 관리점별 거래금액 합계를 구하고 합계금액이 큰 순서로 출력하는 API 개발.( 취소여부가 ‘Y’ 거래는 취소된 거래임)
+	//http://localhost:8080/kakao/cust/mngtSum
 	@ResponseBody
 	@RequestMapping("/cust/mngtSum")
 	public String mngtSumList (HttpServletRequest request, HttpServletResponse response) {
-		
-		//String path = "src/main/resources/static/data/과제1_데이터_관리점정보.csv";
-		//List<MngtVO> mngtVOLsit = getInfoService.readCsvToMngtVo(path);
 				
 		List<AccountVO> accountVOList = getInfoService.custSum();
 		List<MngtVO> mngtVOLsit = getInfoService.mngtSum(accountVOList);
 		
-		/*
-		for(AccountVO accountVO:accountVOList) {
-			for(MngtVO mngtVO: mngtVOLsit) {
-				if(mngtVO.getMngCd().equals(accountVO.getMngCd())) {
-					int sum2018 = mngtVO.getSumAmt2018();
-					int sum2019 = mngtVO.getSumAmt2019();
-					sum2018 = sum2018 + Integer.parseInt(String.valueOf(accountVO.getSumAmt2018())); 
-					sum2019 = sum2019 + Integer.parseInt(String.valueOf(accountVO.getSumAmt2019())); 
-					
-					mngtVO.setSumAmt2018(sum2018);
-					mngtVO.setSumAmt2019(sum2019);
-					
-				}
-			}
-		}
-	*/
 		List<MngtVO> sum2018List = mngtVOLsit.stream().sorted(Comparator.comparing(MngtVO::getSumAmt2018).reversed()).collect(Collectors.toList());
 		List<MngtVO>  sum2019List = mngtVOLsit.stream().sorted(Comparator.comparing(MngtVO::getSumAmt2019).reversed()).collect(Collectors.toList());
 		
@@ -220,82 +191,13 @@ public class GetInfoController {
 			}
 			
 			
-			
-			
 		} else {
 			parameter.put("code","404");
 			parameter.put("메세지", "br code not found error");
 		}
 	
 		return parameter.toString();
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//3. CSV -> Bean
-		@RequestMapping("readCsv/trade.do")
-		public List<TradeVO> csvToTradeVo(HttpServletRequest request) {
-			
-			String path = "src/main/resources/static/data/과제1_데이터_거래내역.csv";
-			
-			//파일 경로 던져주면, 데이터가 VO에 담긴 vo들이 저장된 리스트를 리턴받겠다.
-			List<TradeVO> data = getInfoService.readCsvToTradeVo(path);
-			
-			return data;
-		}
-		@RequestMapping("readCsv/mngt.do")
-		public List<MngtVO> readCsvToMngtVo (HttpServletRequest request) {
-			
-			String path = "src/main/resources/static/data/과제1_데이터_관리점정보.csv";
-			
-			//파일 경로 던져주면, 데이터가 VO에 담긴 vo들이 저장된 리스트를 리턴받겠다.
-			List<MngtVO> data = getInfoService.readCsvToMngtVo(path);
-			
-			return data;
-		}
-	
-		@RequestMapping("readCsv/account.do")
-		public List<AccountVO> csvToAccountVo (HttpServletRequest request) {
-			
-			String path = "src/main/resources/static/data/과제1_데이터_계좌정보.csv";
-			
-			
-			//파일 경로 던져주면, 데이터가 VO에 담긴 vo들이 저장된 리스트를 리턴받겠다.
-			List<AccountVO> data = getInfoService.readCsvToAccountVo(path);
-			
-			return data;
-		}
-	
-	
-	
-
-	
-
-	
-	
-	
-	
+	}	
 	
 
 }
