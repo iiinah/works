@@ -198,6 +198,5 @@ public class GetInfoController {
 	
 		return parameter.toString();
 	}	
-	
 
 }

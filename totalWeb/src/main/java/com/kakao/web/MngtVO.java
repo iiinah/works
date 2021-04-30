@@ -1,7 +1,6 @@
 package com.kakao.web;
 
 import lombok.Data;
-import lombok.ToString;
 
 @Data
 //@ToString
